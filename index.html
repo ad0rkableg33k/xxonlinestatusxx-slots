@@ -244,17 +244,69 @@ canvas#wheelCanvas{border-radius:50%;border:3px solid var(--gold);box-shadow:0 0
 @keyframes particleFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes fadeInDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+
+/* SHOP BUTTON */
+.shop-btn{display:flex;align-items:center;gap:8px;width:100%;background:linear-gradient(135deg,#1a0025,#0d001a);border:2px solid var(--gold);border-radius:12px;padding:12px 18px;cursor:pointer;text-decoration:none;color:var(--gold);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.2em;transition:all 0.2s;margin-bottom:14px;box-shadow:var(--glow-gold);}
+.shop-btn:hover{background:linear-gradient(135deg,#2a0035,#1a0028);box-shadow:0 0 20px #ffd700,0 0 40px #ffd70055;transform:translateY(-1px);}
+.shop-btn-icon{font-size:28px;}
+.shop-btn-text{flex:1;}
+.shop-btn-title{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;color:var(--gold);text-shadow:var(--glow-gold);letter-spacing:.15em;}
+.shop-btn-sub{font-size:9px;color:#ffd70088;letter-spacing:.15em;margin-top:2px;}
+.shop-btn-arrow{font-size:18px;color:#ffd70077;}
+
+/* JACKPOT AD BANNER */
+.jp-ad{width:100%;background:linear-gradient(135deg,#0d000f,#1a0008,#0d000f);border:1px solid #ff2d7844;border-radius:10px;padding:10px 14px;margin-bottom:12px;text-align:center;position:relative;overflow:hidden;}
+.jp-ad::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,#ff2d7808,#cc00ff08,#ff2d7808,transparent);animation:adShimmer 3s linear infinite;}
+@keyframes adShimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.jp-ad-title{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.2em;text-shadow:var(--glow-gold);margin-bottom:4px;}
+.jp-ad-prizes{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:6px;}
+.jp-prize-tag{font-size:9px;letter-spacing:.1em;padding:3px 10px;border-radius:20px;border:1px solid currentColor;}
+
+/* JACKPOT METER */
+.jp-meter{width:100%;background:#05000a;border:1px solid var(--panel-border);border-radius:8px;padding:8px 12px;margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+.jp-meter-label{font-size:8px;color:#ffffff44;letter-spacing:.2em;text-transform:uppercase;white-space:nowrap;}
+.jp-meter-bar{flex:1;height:6px;background:#1a0025;border-radius:3px;overflow:hidden;}
+.jp-meter-fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--gold));border-radius:3px;transition:width 0.5s ease;}
+.jp-meter-val{font-family:'Orbitron',sans-serif;font-size:10px;color:var(--gold);white-space:nowrap;}
 </style>
 </head>
 <body>
 <canvas id="stars"></canvas>
 
 <!-- ═══════════════ JACKPOT ═══════════════ -->
-<div class="jackpot-ov" id="jackpotOv">
-  <div class="jt-text">JACKPOT!</div>
-  <div class="jt-sub">🔥 FULLY ONLINE 🔥</div>
-  <div class="jt-sub" id="jtAmt" style="margin-top:6px;font-size:13px;"></div>
-  <button class="jt-close" onclick="closeJackpot()">COLLECT &amp; GO</button>
+<!-- BAT JACKPOT -->
+<div class="jackpot-ov" id="jackpotOv-bat" style="background:#000000ee;">
+  <div class="jt-text" style="background:linear-gradient(135deg,#9b00ff,#ffd700,#cc00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">🦇 JACKPOT! 🦇</div>
+  <div class="jt-sub">30 MIN VC WITH BABYYBAT</div>
+  <div class="jt-sub" id="jtAmt-bat" style="margin-top:4px;font-size:13px;"></div>
+  <div style="margin:18px 0 10px;font-size:10px;color:#ffffff77;letter-spacing:.15em;max-width:340px;line-height:1.8;">You won an exclusive 30-minute video call with BabyyBATxoxo! Fill out the form below to claim your prize.</div>
+  <iframe id="batJpForm" src="https://formspree.io/f/BAT_FORM_ID" style="width:100%;max-width:380px;height:340px;border:1px solid #9b00ff44;border-radius:12px;background:#0a000f;"></iframe>
+  <button class="jt-close" style="border-color:#9b00ff;color:#9b00ff;box-shadow:0 0 8px #9b00ff;" onclick="closeJackpot('bat')">CLOSE</button>
+</div>
+
+<!-- DRAGON JACKPOT -->
+<div class="jackpot-ov" id="jackpotOv-dragon" style="background:#000000ee;">
+  <div class="jt-text" style="background:linear-gradient(135deg,#ff2d78,#ffd700,#ff9900);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">🐉 JACKPOT! 🐉</div>
+  <div class="jt-sub">30 MIN VC WITH DRAG0N</div>
+  <div class="jt-sub" id="jtAmt-dragon" style="margin-top:4px;font-size:13px;"></div>
+  <div style="margin:18px 0 10px;font-size:10px;color:#ffffff77;letter-spacing:.15em;max-width:340px;line-height:1.8;">You won an exclusive 30-minute video call with Drag0n! Fill out the form below to claim your prize.</div>
+  <iframe id="dragJpForm" src="https://formspree.io/f/DRAGON_FORM_ID" style="width:100%;max-width:380px;height:340px;border:1px solid #ff2d7844;border-radius:12px;background:#0a000f;"></iframe>
+  <button class="jt-close" style="border-color:#ff9900;color:#ff9900;box-shadow:0 0 8px #ff9900;" onclick="closeJackpot('dragon')">CLOSE</button>
+</div>
+
+<!-- ICONIC JACKPOT -->
+<div class="jackpot-ov" id="jackpotOv-iconic" style="background:#000000ee;">
+  <div class="jt-text" style="background:linear-gradient(135deg,#00e5ff,#ffd700,#00e5ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">❤️‍🔥 JACKPOT! ❤️‍🔥</div>
+  <div class="jt-sub">15 MIN VC — YOU CHOOSE WHO!</div>
+  <div class="jt-sub" id="jtAmt-iconic" style="margin-top:4px;font-size:13px;"></div>
+  <div style="margin:18px 0 6px;font-size:10px;color:#ffffff77;letter-spacing:.15em;max-width:340px;line-height:1.8;">You won a 15-minute video call with BabyyBAT, Drag0n, or BOTH! Fill out the form below to claim.</div>
+  <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;justify-content:center;">
+    <div style="font-size:9px;border:1px solid #9b00ff66;border-radius:8px;padding:5px 12px;color:#9b00ff;letter-spacing:.1em;">🦇 BabyyBAT</div>
+    <div style="font-size:9px;border:1px solid #ff2d7866;border-radius:8px;padding:5px 12px;color:#ff2d78;letter-spacing:.1em;">🐉 Drag0n</div>
+    <div style="font-size:9px;border:1px solid #ffd70066;border-radius:8px;padding:5px 12px;color:#ffd700;letter-spacing:.1em;">✨ BOTH</div>
+  </div>
+  <iframe id="iconJpForm" src="https://formspree.io/f/ICONIC_FORM_ID" style="width:100%;max-width:380px;height:340px;border:1px solid #00e5ff44;border-radius:12px;background:#0a000f;"></iframe>
+  <button class="jt-close" style="border-color:#00e5ff;color:#00e5ff;box-shadow:0 0 8px #00e5ff;" onclick="closeJackpot('iconic')">CLOSE</button>
 </div>
 
 <!-- ═══════════════ BONUS ENTRY ═══════════════ -->
@@ -298,14 +350,35 @@ canvas#wheelCanvas{border-radius:50%;border:3px solid var(--gold);box-shadow:0 0
     <div><div class="wallet-label">Coins</div><div class="wallet-val" id="walletDisplay">10,000</div></div>
     <button class="daily-btn" id="dailyBtn" onclick="claimDaily()">Daily +5K</button>
   </div>
+  <!-- SHOP LINK -->
+  <a class="shop-btn" href="shop.html">
+    <div class="shop-btn-icon">🛍️</div>
+    <div class="shop-btn-text">
+      <div class="shop-btn-title">$tatu$ ѕн♡ρ</div>
+      <div class="shop-btn-sub">spend your $tatu$ ¢oin$ on real prizes</div>
+    </div>
+    <div class="shop-btn-arrow">→</div>
+  </a>
+
+  <!-- JACKPOT AD -->
+  <div class="jp-ad">
+    <div class="jp-ad-title">🏆 JACKPOTS UP FOR GRABS 🏆</div>
+    <div style="font-size:9px;color:#ffffff55;letter-spacing:.15em;margin-bottom:6px;">spin to win exclusive time with the hosts</div>
+    <div class="jp-ad-prizes">
+      <div class="jp-prize-tag" style="color:#9b00ff;">🦇 30 MIN VC · BABYYBAT</div>
+      <div class="jp-prize-tag" style="color:#ff9900;">🐉 30 MIN VC · DRAG0N</div>
+      <div class="jp-prize-tag" style="color:#00e5ff;">❤️‍🔥 15 MIN VC · YOUR CHOICE</div>
+    </div>
+  </div>
+
   <div class="landing-title">SELECT YOUR SLOT</div>
-  <div class="landing-sub">each game • same wallet • different chaos</div>
+  <div class="landing-sub">same wallet • earn $tatu$ ¢oin$ • win real prizes</div>
   <div class="char-grid">
     <div class="char-card bat" onclick="loadGame('bat')">
       <div class="char-icon">🦇</div>
       <div class="char-info">
         <div class="char-name">BabyyBAT</div>
-        <div class="char-desc">243 ways • sticky wilds • climbing multipliers<br>scatter free spins • full chaos energy</div>
+        <div class="char-desc">243 ways • sticky wilds • climbing multipliers<br>scatter free spins • retriggers<br><span style="color:#9b00ff;font-size:8px;">🏆 JACKPOT: 30 min VC with BabyyBAT</span></div>
       </div>
       <div class="char-tag">PLAY →</div>
     </div>
@@ -313,7 +386,7 @@ canvas#wheelCanvas{border-radius:50%;border:3px solid var(--gold);box-shadow:0 0
       <div class="char-icon">🐉</div>
       <div class="char-info">
         <div class="char-name">Drag0n</div>
-        <div class="char-desc">5 expanding dragons • fill the reel • reel multipliers<br>skull scatter → pick a card or free spins</div>
+        <div class="char-desc">5 expanding dragons • reel multipliers<br>skull scatter → pick a card or free spins<br><span style="color:#ff9900;font-size:8px;">🏆 JACKPOT: 30 min VC with Drag0n</span></div>
       </div>
       <div class="char-tag">PLAY →</div>
     </div>
@@ -321,7 +394,7 @@ canvas#wheelCanvas{border-radius:50%;border:3px solid var(--gold);box-shadow:0 0
       <div class="char-icon">❤️‍🔥</div>
       <div class="char-info">
         <div class="char-name">ICONIC</div>
-        <div class="char-desc">classic 3×3 • center line pays • 7s & cherries<br>random surprise bonus every time</div>
+        <div class="char-desc">classic 3×3 • center line pays • 7s & cherries<br>random surprise bonus every time<br><span style="color:#00e5ff;font-size:8px;">🏆 JACKPOT: 15 min VC — BAT / DRAG0N / BOTH</span></div>
       </div>
       <div class="char-tag">PLAY →</div>
     </div>
@@ -337,7 +410,19 @@ canvas#wheelCanvas{border-radius:50%;border:3px solid var(--gold);box-shadow:0 0
     <div><div class="wallet-label">Coins</div><div class="wallet-val" id="batCoins">10,000</div></div>
     <div><div class="wallet-label">Last Win</div><div class="wallet-val" style="color:var(--cyan);text-shadow:var(--glow-cyan);font-size:16px;" id="batLastWin">0</div></div>
   </div>
-  <button class="back-btn" onclick="goHome()">← BACK</button>
+  <div style="display:flex;gap:8px;width:100%;margin-bottom:10px;">
+    <button class="back-btn" style="margin-bottom:0;" onclick="goHome()">← BACK</button>
+    <a href="shop.html" style="margin-left:auto;background:none;border:1px solid #ffd70055;border-radius:6px;color:#ffd70099;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.2em;padding:5px 12px;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:4px;">🛍️ $tatu$ ѕн♡ρ</a>
+  </div>
+  <div class="jp-meter">
+    <span class="jp-meter-label">🏆 JACKPOT</span>
+    <div class="jp-meter-bar"><div class="jp-meter-fill" id="batJpMeter" style="width:0%"></div></div>
+    <span class="jp-meter-val" id="batJpVal">30 MIN VC</span>
+  </div>
+  <div class="jp-ad" style="margin-bottom:12px;">
+    <div class="jp-ad-title" style="color:#9b00ff;text-shadow:0 0 8px #9b00ff;">🦇 WIN A 30 MIN VC WITH BABYYBAT 🦇</div>
+    <div style="font-size:9px;color:#ffffff44;letter-spacing:.12em;margin-top:3px;">hit the jackpot to claim — earn $tatu$ ¢oin$ every spin</div>
+  </div>
   <div class="bonus-hud" id="batBonusHud">
     <div class="bh-block"><div class="bh-label">Spins</div><div class="bh-val" id="bHudSpins">10</div></div>
     <div class="bh-block"><div class="bh-label">Mult</div><div class="bh-val gold" id="bHudMult">×1</div></div>
@@ -400,7 +485,19 @@ canvas#wheelCanvas{border-radius:50%;border:3px solid var(--gold);box-shadow:0 0
     <div><div class="wallet-label">Coins</div><div class="wallet-val" id="dragCoins">10,000</div></div>
     <div><div class="wallet-label">Last Win</div><div class="wallet-val" style="color:#ff9900;text-shadow:0 0 8px #ff9900;font-size:16px;" id="dragLastWin">0</div></div>
   </div>
-  <button class="back-btn" onclick="goHome()">← BACK</button>
+  <div style="display:flex;gap:8px;width:100%;margin-bottom:10px;">
+    <button class="back-btn" style="margin-bottom:0;" onclick="goHome()">← BACK</button>
+    <a href="shop.html" style="margin-left:auto;background:none;border:1px solid #ffd70055;border-radius:6px;color:#ffd70099;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.2em;padding:5px 12px;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:4px;">🛍️ $tatu$ ѕн♡ρ</a>
+  </div>
+  <div class="jp-meter" style="border-color:#ff2d7833;">
+    <span class="jp-meter-label">🏆 JACKPOT</span>
+    <div class="jp-meter-bar"><div class="jp-meter-fill" id="dragJpMeter" style="width:0%;background:linear-gradient(90deg,#ff2d78,#ffd700);"></div></div>
+    <span class="jp-meter-val" id="dragJpVal" style="color:#ff9900;">30 MIN VC</span>
+  </div>
+  <div class="jp-ad" style="margin-bottom:12px;border-color:#ff2d7844;">
+    <div class="jp-ad-title" style="color:#ff9900;text-shadow:0 0 8px #ff9900;">🐉 WIN A 30 MIN VC WITH DRAG0N 🐉</div>
+    <div style="font-size:9px;color:#ffffff44;letter-spacing:.12em;margin-top:3px;">hit the jackpot to claim — earn $tatu$ ¢oin$ every spin</div>
+  </div>
   <div class="dragon-mult-bar">
     <div class="dragon-mult-label">Dragon Multiplier</div>
     <div class="dragon-mult-val" id="dragMultVal">×1</div>
@@ -456,7 +553,19 @@ canvas#wheelCanvas{border-radius:50%;border:3px solid var(--gold);box-shadow:0 0
     <div><div class="wallet-label">Coins</div><div class="wallet-val" id="iconCoins">10,000</div></div>
     <div><div class="wallet-label">Last Win</div><div class="wallet-val" style="color:#00e5ff;text-shadow:var(--glow-cyan);font-size:16px;" id="iconLastWin">0</div></div>
   </div>
-  <button class="back-btn" onclick="goHome()">← BACK</button>
+  <div style="display:flex;gap:8px;width:100%;margin-bottom:10px;">
+    <button class="back-btn" style="margin-bottom:0;" onclick="goHome()">← BACK</button>
+    <a href="shop.html" style="margin-left:auto;background:none;border:1px solid #ffd70055;border-radius:6px;color:#ffd70099;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.2em;padding:5px 12px;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:4px;">🛍️ $tatu$ ѕн♡ρ</a>
+  </div>
+  <div class="jp-meter" style="border-color:#00e5ff33;">
+    <span class="jp-meter-label">🏆 JACKPOT</span>
+    <div class="jp-meter-bar"><div class="jp-meter-fill" id="iconJpMeter" style="width:0%;background:linear-gradient(90deg,#00e5ff,#ffd700);"></div></div>
+    <span class="jp-meter-val" id="iconJpVal" style="color:#00e5ff;">15 MIN VC</span>
+  </div>
+  <div class="jp-ad" style="margin-bottom:12px;border-color:#00e5ff33;">
+    <div class="jp-ad-title" style="color:#00e5ff;text-shadow:0 0 8px #00e5ff;">❤️‍🔥 WIN 15 MIN VC — BAT / DRAG0N / BOTH ❤️‍🔥</div>
+    <div style="font-size:9px;color:#ffffff44;letter-spacing:.12em;margin-top:3px;">hit the jackpot to claim — earn $tatu$ ¢oin$ every spin</div>
+  </div>
   <div class="machine iconic-machine" id="iconMachine">
     <div style="text-align:center;margin-bottom:10px;"><span style="font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;color:#00e5ff;letter-spacing:.2em;text-shadow:var(--glow-cyan);border:1px solid #00e5ff33;border-radius:20px;padding:3px 12px;background:#000a14;">✦ CENTER LINE ✦</span></div>
     <div class="iconic-reel-container" id="iconReels">
@@ -513,11 +622,36 @@ canvas#wheelCanvas{border-radius:50%;border:3px solid var(--gold);box-shadow:0 0
 })();
 
 // ══════════════════════════════════════════════════
-//  GLOBAL STATE
+//  GLOBAL STATE + localStorage wallet
 // ══════════════════════════════════════════════════
-let coins = 10000;
+function loadCoins(){ const s=localStorage.getItem('statusCoins'); return s?parseInt(s):10000; }
+function saveCoins(){ localStorage.setItem('statusCoins',coins); }
+
+let coins = loadCoins();
 let currentGame = null;
 const BET_STEPS = [5,10,25,50,100,150,200,250,300,400,500,750,1000,1500,2000,2500,3000,4000,5000,6000,7500,10000];
+
+// ── JACKPOT SYSTEM ──
+// Low  ≈ 1 in 2000 spins, Medium ≈ 1 in 500 spins
+const JP_CHANCE = { bat: 1/2000, dragon: 1/2000, iconic: 1/500 };
+// Per-game jackpot meters (0-100 visual only, random each spin for tension)
+let jpMeter = { bat: 0, dragon: 0, iconic: 0 };
+
+function rollJackpot(game){
+  const chance = JP_CHANCE[game] || 1/1000;
+  return Math.random() < chance;
+}
+function tickJpMeter(game){
+  // Meter drifts up slowly, resets on jackpot — purely cosmetic tension builder
+  jpMeter[game] = Math.min(99, jpMeter[game] + Math.random()*3 + 0.5);
+  const el = document.getElementById(`${game==='iconic'?'icon':game}JpMeter`);
+  if(el) el.style.width = jpMeter[game]+'%';
+}
+function resetJpMeter(game){
+  jpMeter[game]=0;
+  const el=document.getElementById(`${game==='iconic'?'icon':game}JpMeter`);
+  if(el)el.style.width='0%';
+}
 
 // shared free spin state (used by bat + dragon)
 let inFreeSpins=false, fsSpins=0, fsMult=1, fsTotal=0;
@@ -547,6 +681,7 @@ function loadGame(game){
   else if(game==='iconic'){iconInit();}
 }
 function updateWallet(){
+  saveCoins();
   document.getElementById('walletDisplay').textContent=coins.toLocaleString();
   document.getElementById('batCoins').textContent=coins.toLocaleString();
   document.getElementById('batCoins2').textContent=coins.toLocaleString();
@@ -554,7 +689,7 @@ function updateWallet(){
   document.getElementById('dragCoins2').textContent=coins.toLocaleString();
   document.getElementById('iconCoins').textContent=coins.toLocaleString();
   document.getElementById('iconCoins2').textContent=coins.toLocaleString();
-  if(coins<=0&&!inFreeSpins){setTimeout(()=>{coins=1000;updateWallet();},800);}
+  if(coins<=0&&!inFreeSpins){setTimeout(()=>{coins=1000;updateWallet();showWinMsg('batWinMsg','batWinSub','Free chips!','+1,000 coins');},800);}
 }
 function claimDaily(){
   const btn=document.getElementById('dailyBtn');
@@ -566,12 +701,14 @@ function togglePT(id){document.getElementById(id).classList.toggle('open');}
 // ══════════════════════════════════════════════════
 //  JACKPOT
 // ══════════════════════════════════════════════════
-function showJackpot(prize){
-  document.getElementById('jtAmt').textContent=`+${prize.toLocaleString()} COINS`;
-  document.getElementById('jackpotOv').classList.add('show');
-  spawnParticles(60);
+function showJackpot(prize, game){
+  const g = game || currentGame || 'bat';
+  document.getElementById(`jtAmt-${g}`).textContent=`+${prize.toLocaleString()} $tatu$ ¢oin$ won!`;
+  document.getElementById(`jackpotOv-${g}`).classList.add('show');
+  resetJpMeter(g);
+  spawnParticles(60,true);
 }
-function closeJackpot(){document.getElementById('jackpotOv').classList.remove('show');}
+function closeJackpot(game){ document.getElementById(`jackpotOv-${game}`).classList.remove('show'); }
 
 // ══════════════════════════════════════════════════
 //  WIN MSG
@@ -929,6 +1066,7 @@ function batSpin(){
   const ps=[];for(let r=0;r<5;r++)ps.push(animGenericReel('batReels',r,finalGrid[r],500+r*280,CELL_H));
   Promise.all(ps).then(()=>{
     batGrid=finalGrid;batSpinning=false;btn.classList.remove('spinning');btn.disabled=false;
+    tickJpMeter('bat');
     if(inFreeSpins){fsMult=Math.min(fsMult+1,15);fsSpins--;applySticky();updateBatBonusHUD();evalBat(true);}
     else evalBat(false);
   });
@@ -967,6 +1105,8 @@ function evalBat(isFree){
     const rows=[r0,r1,r2,r3,r4];const res=evalLine243(line,BAT_WILD,BAT_PAY);
     if(res.count>=3){totalMult+=res.mult;totalWays++;for(let i=0;i<res.count;i++)winCells.add(`${i},${rows[i]}`);if(res.sym===BAT_WILD&&res.count===5)isJP=true;}
   }
+  // Independent jackpot roll (low chance)
+  if(!isJP && rollJackpot('bat')) isJP=true;
   scatterCells.forEach(k=>winCells.add(k));
   if(winCells.size>0)hlCells('batReels',winCells,scatterCells);
   if(totalWays>0){
@@ -976,7 +1116,7 @@ function evalBat(isFree){
     document.getElementById('batLastWin').textContent=lastW.toLocaleString();
     if(isFree)fsTotal+=prize;
     updateBatUI();
-    if(isJP){showJackpot(prize);return;}
+    if(isJP){showJackpot(bet*500,'bat');return;}
     const mult_note=isFree&&fsMult>1?` ×${fsMult} MULT`:'';
     const tier=totalMult>=100?'big':totalMult>=15?'med':'small';
     const msgs={big:['BIG WIN!!','DEAD GORGEOUS 💀'],med:['NICE ONE!','Bat Signal 🦇'],small:['Win!','Online~']};
@@ -1093,6 +1233,7 @@ function dragSpin(){
     dragGrid=finalGrid;
     // EXPAND DRAGONS
     expandDragons();
+    tickJpMeter('dragon');
     dragSpinning=false;btn.classList.remove('spinning');btn.disabled=false;
     evalDragon();
   });
@@ -1136,6 +1277,7 @@ function evalDragon(){
     const rows=[r0,r1,r2,r3,r4];const res=evalLine243(line,DRAG_WILD,DRAG_PAY);
     if(res.count>=3){totalMult+=res.mult;totalWays++;for(let i=0;i<res.count;i++)winCells.add(`${i},${rows[i]}`);if(res.sym===DRAG_WILD&&res.count===5)isJP=true;}
   }
+  if(!isJP && rollJackpot('dragon')) isJP=true;
 
   // Apply dragon reel multiplier on top of way multipliers
   const finalMult=totalMult*dragonMult+(dragonReels>=2?dragonMult:0);
@@ -1148,7 +1290,7 @@ function evalDragon(){
     document.getElementById('dragLW2').textContent=prize.toLocaleString();
     document.getElementById('dragLastWin').textContent=prize.toLocaleString();
     updateDragUI();
-    if(isJP){showJackpot(prize);return;}
+    if(isJP){showJackpot(bet*500,'dragon');return;}
     if(prize>0){
       const tier=finalMult>=80?'big':finalMult>=15?'med':'small';
       const msgs={big:['DRAGON FIRE!!','MASSIVE WIN 🐉'],med:['Dragon Win! 🐉','Nice haul!'],small:['Win!','Dragon blessing~']};
@@ -1258,6 +1400,7 @@ function iconSpin(){
   }
   Promise.all(ps).then(()=>{
     iconGrid=finalGrid;iconSpinning=false;btn.classList.remove('spinning');btn.disabled=false;
+    tickJpMeter('iconic');
     evalIcon();
   });
 }
@@ -1300,6 +1443,11 @@ function evalIcon(){
     }
   }
 
+  // Independent jackpot roll (medium chance)
+  if(!hasBar && rollJackpot('iconic')){
+    const jpPrize=bet*200;coins+=jpPrize;updateIconUI();
+    showJackpot(jpPrize,'iconic');return;
+  }
   if(prize>0){
     coins+=prize;updateIconUI();
     document.getElementById('iconLW').textContent=prize.toLocaleString();

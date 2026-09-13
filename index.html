@@ -159,8 +159,14 @@ canvas#stars{position:fixed;inset:0;pointer-events:none;z-index:0;}
 @keyframes bonusPulse{0%,100%{filter:drop-shadow(0 0 16px #00ff88)}50%{filter:drop-shadow(0 0 32px #ffd700)}}
 
 /* JACKPOT */
-.jackpot-ov{position:fixed;inset:0;background:#000000cc;z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px;}
-.jackpot-ov.show{display:flex;}
+.jackpot-ov.show {
+  display: flex !important;
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
 .jt-text{font-family:'Orbitron',sans-serif;font-size:clamp(30px,9vw,60px);font-weight:900;background:linear-gradient(135deg,var(--pink),var(--gold),var(--magenta));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 20px #ff2d78);animation:jpPulse 0.5s ease infinite;}
 @keyframes jpPulse{0%,100%{filter:drop-shadow(0 0 20px #ff2d78)}50%{filter:drop-shadow(0 0 40px #cc00ff) drop-shadow(0 0 60px #ffd700)}}
 .jt-sub{font-size:clamp(10px,3vw,15px);color:var(--gold);letter-spacing:.4em;margin-top:8px;}
@@ -209,7 +215,15 @@ canvas#stars{position:fixed;inset:0;pointer-events:none;z-index:0;}
 /* Wheel */
 .wheel-wrap{position:relative;width:240px;height:240px;}
 canvas#wheelCanvas{border-radius:50%;border:3px solid var(--gold);box-shadow:0 0 20px #ffd70055;}
-.wheel-pointer{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:28px;filter:drop-shadow(0 0 6px #ffd700);}
+.wheel-pointer {
+  position: absolute;
+  right: -18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 32px;
+  filter: drop-shadow(0 0 6px #ffd700);
+  color: #ffd700;
+}
 .spin-wheel-btn{background:linear-gradient(135deg,var(--gold),#ff9900);border:none;border-radius:8px;color:#000;font-family:'Orbitron',sans-serif;font-weight:900;font-size:12px;padding:10px 24px;cursor:pointer;}
 /* Cards */
 .cards-row{display:flex;gap:12px;}
@@ -642,10 +656,21 @@ function rollJackpot(game){
   return Math.random() < chance;
 }
 function tickJpMeter(game){
-  // Meter drifts up slowly, resets on jackpot — purely cosmetic tension builder
-  jpMeter[game] = Math.min(99, jpMeter[game] + Math.random()*3 + 0.5);
-  const el = document.getElementById(`${game==='iconic'?'icon':game}JpMeter`);
-  if(el) el.style.width = jpMeter[game]+'%';
+  if (game === 'iconic') {
+    jpMeter[game] = Math.min(100, jpMeter[game] + Math.random() * 2 + 0.5);
+    const el = document.getElementById('iconJpMeter');
+    if (el) el.style.width = jpMeter[game] + '%';
+    
+    // When bar hits 100%, guarantee the jackpot on the next spin
+    if (jpMeter[game] >= 100) {
+      window.forceIconicJackpot = true;
+    }
+  } else {
+    // Keep bat/dragon meters as they were
+    jpMeter[game] = Math.min(99, jpMeter[game] + Math.random() * 3 + 0.5);
+    const el = document.getElementById(`${game === 'iconic' ? 'icon' : game}JpMeter`);
+    if (el) el.style.width = jpMeter[game] + '%';
+  }
 }
 function resetJpMeter(game){
   jpMeter[game]=0;
@@ -828,9 +853,9 @@ function buildWheel(bet){
   const content=document.getElementById('mgContent');
   const mults=[2,3,5,10,15,20,50,100];
   const colors=['#ff2d78','#cc00ff','#9b00ff','#00e5ff','#ff9900','#ffd700','#00ff88','#ff2d78'];
-  content.innerHTML=`<div class="wheel-wrap"><canvas id="wheelCanvas" width="220" height="220"></canvas><div class="wheel-pointer">▼</div></div><button class="spin-wheel-btn" id="wheelSpinBtn" onclick="spinWheel(${bet},[${mults}])">SPIN!</button><div class="mini-result" id="wheelResult"></div>`;
+  content.innerHTML=`<div class="wheel-wrap"><canvas id="wheelCanvas" width="220" height="220"></canvas><div class="wheel-pointer">◀</div></div><button class="spin-wheel-btn" id="wheelSpinBtn" onclick="spinWheel(${bet},[${mults}])">SPIN!</button><div class="mini-result" id="wheelResult"></div>`;
   drawWheel(mults,colors);
-}
+} 
 function drawWheel(mults,colors,angle=0){
   const cv=document.getElementById('wheelCanvas');if(!cv)return;
   const ctx=cv.getContext('2d'),n=mults.length,cx=110,cy=110,r=100;
@@ -1406,33 +1431,97 @@ function iconSpin(){
 }
 
 function evalIcon(){
-  const bet=BET_STEPS[iconBetIdx];
+  const bet = BET_STEPS[iconBetIdx];
   // Center row = row index 1 of each reel
-  const centerLine=[iconGrid[0][1],iconGrid[1][1],iconGrid[2][1]];
+  const centerLine = [iconGrid[0][1], iconGrid[1][1], iconGrid[2][1]];
+
+  // 1. TRUE JACKPOT: Must be 💲 💲 💲 across all 3 center reels
+  if (centerLine[0] === '💲' && centerLine[1] === '💲' && centerLine[2] === '💲') {
+    const jpPrize = bet * 500; 
+    coins += jpPrize;
+    updateIconUI();
+    showJackpot(jpPrize, 'iconic'); // This triggers your Formspree popup
+    resetJpMeter('iconic');
+    return; // Stop evaluating, they won the jackpot
+  }
+
+  // 2. GUARANTEED JACKPOT: If the meter hits 100%, force the win
+  if (window.forceIconicJackpot) {
+    const jpPrize = bet * 500;
+    coins += jpPrize;
+    updateIconUI();
+    showJackpot(jpPrize, 'iconic');
+    window.forceIconicJackpot = false; // Reset for next time
+    resetJpMeter('iconic');
+    return;
+  }
 
   // check for BAR (bonus) on center line
-  const hasBar=centerLine.includes(ICON_BAR);
+  const hasBar = centerLine.includes(ICON_BAR);
 
   // Replace wilds
-  const effective=centerLine.map(s=>s===ICON_WILD?'WILD':s);
+  const effective = centerLine.map(s => s === ICON_WILD ? 'WILD' : s);
 
   // Find base symbol
-  let base=null;
-  for(let s of centerLine){if(s!==ICON_WILD&&s!==ICON_BAR){base=s;break;}}
+  let base = null;
+  for(let s of centerLine){ if(s !== ICON_WILD && s !== ICON_BAR){ base = s; break; } }
 
-  let prize=0,winKey='',winMsg='';
+  let prize = 0, winKey = '', winMsg = '';
 
   if(!hasBar){
     // Check 3 of a kind (with wild substitution)
-    const allMatch=centerLine.every(s=>s===centerLine.find(x=>x!==ICON_WILD&&x!==ICON_BAR)||s===ICON_WILD);
-    const effLine=centerLine.map(s=>s===ICON_WILD?(base||ICON_WILD):s);
-    const k3=effLine.join('');
-    if(ICON_PAY_CENTER[k3]){prize=bet*ICON_PAY_CENTER[k3];winKey=k3;}
+    const allMatch = centerLine.every(s => s === centerLine.find(x => x !== ICON_WILD && x !== ICON_BAR) || s === ICON_WILD);
+    const effLine = centerLine.map(s => s === ICON_WILD ? (base || ICON_WILD) : s);
+    const k3 = effLine.join('');
+    if(ICON_PAY_CENTER[k3]){ prize = bet * ICON_PAY_CENTER[k3]; winKey = k3; }
     // 2 cherries
-    else if(!winKey){const cherries=centerLine.filter(s=>s==='🍒'||s===ICON_WILD).length;if(cherries>=2&&centerLine[0]==='🍒'){prize=bet*ICON_PAY_CENTER['🍒🍒'];winKey='🍒🍒';}}
+    else if(!winKey){ 
+      const cherries = centerLine.filter(s => s === '🍒' || s === ICON_WILD).length; 
+      if(cherries >= 2 && centerLine[0] === '🍒'){ prize = bet * ICON_PAY_CENTER['🍒🍒']; winKey = '🍒🍒'; } 
+    }
     // 1 cherry
-    if(!winKey&&centerLine[0]==='🍒'){prize=bet*ICON_PAY_CENTER['🍒'];winKey='🍒';}
+    if(!winKey && centerLine[0] === '🍒'){ prize = bet * ICON_PAY_CENTER['🍒']; winKey = '🍒'; }
   }
+
+  // highlight center cells
+  if(winKey || hasBar){
+    for(let r = 0; r < 3; r++){
+      const strip = document.getElementById(`icon_strip${r}`);
+      const cells = strip.querySelectorAll('.iconic-cell');
+      cells[2].classList.add('win-hl'); // center row = cell index 2
+    }
+  }
+
+  if(prize > 0){
+    coins += prize; updateIconUI();
+    document.getElementById('iconLW').textContent = prize.toLocaleString();
+    document.getElementById('iconLastWin').textContent = prize.toLocaleString();
+    const tier = prize >= bet * 50 ? 'big' : prize >= bet * 10 ? 'med' : 'small';
+    const msgs = { big: ['JACKPOT!!','TRIPLE 7s!! 🎰'], med: ['BIG WIN!','Lucky! ⭐'], small: ['Win!','Cha-ching~'] };
+    const m = msgs[tier]; 
+    showWinMsg('iconWinMsg', 'iconWinSub', m[Math.floor(Math.random() * m.length)], `+${prize.toLocaleString()} coins`);
+    document.getElementById('iconMachine').classList.add('winning'); 
+    setTimeout(() => document.getElementById('iconMachine').classList.remove('winning'), 1200);
+    spawnParticles(tier === 'big' ? 24 : 8);
+  }
+
+  if(hasBar){
+    setTimeout(() => {
+      boxPicked = false; cardPicked = false; mineWon = 0; minePicked = false; wheelSpinning = false;
+      openMiniGame(BET_STEPS[iconBetIdx], (bonusPrize) => {
+        if(bonusPrize > 0){
+          coins += bonusPrize; updateIconUI();
+          showWinMsg('iconWinMsg', 'iconWinSub', 'BONUS WIN!', `+${bonusPrize.toLocaleString()} coins`);
+          spawnParticles(20, true);
+        }
+      });
+    }, prize > 0 ? 1400 : 400);
+  } else if(prize === 0){
+    // near miss
+    const matching = centerLine.filter((s, i, a) => s === a[0] || s === ICON_WILD).length;
+    if(matching >= 2) setTimeout(() => showWinMsg('iconWinMsg', 'iconWinSub', 'So close!', ''), 200);
+  }
+}
 
   // highlight center cells
   if(winKey||hasBar){

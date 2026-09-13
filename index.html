@@ -159,18 +159,35 @@ canvas#stars{position:fixed;inset:0;pointer-events:none;z-index:0;}
 @keyframes bonusPulse{0%,100%{filter:drop-shadow(0 0 16px #00ff88)}50%{filter:drop-shadow(0 0 32px #ffd700)}}
 
 /* JACKPOT */
-.jackpot-ov.show {
-  display: flex !important;
+.jackpot-ov {
+  display: none !important; /* HARD HIDE BY DEFAULT */
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.92);
   z-index: 9999;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 }
-.jt-text{font-family:'Orbitron',sans-serif;font-size:clamp(30px,9vw,60px);font-weight:900;background:linear-gradient(135deg,var(--pink),var(--gold),var(--magenta));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 20px #ff2d78);animation:jpPulse 0.5s ease infinite;}
-@keyframes jpPulse{0%,100%{filter:drop-shadow(0 0 20px #ff2d78)}50%{filter:drop-shadow(0 0 40px #cc00ff) drop-shadow(0 0 60px #ffd700)}}
-.jt-sub{font-size:clamp(10px,3vw,15px);color:var(--gold);letter-spacing:.4em;margin-top:8px;}
-.jt-close{margin-top:22px;background:none;border:2px solid var(--pink);border-radius:7px;color:var(--pink);font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:.2em;padding:8px 22px;cursor:pointer;box-shadow:var(--glow-pink);}
+.jackpot-ov.show {
+  display: flex !important; /* ONLY SHOWS WHEN JS ADDS 'show' CLASS */
+}
+.jt-close {
+  margin-top: 16px;
+  padding: 10px 24px;
+  background: transparent;
+  border: 2px solid currentColor;
+  border-radius: 8px;
+  color: inherit;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: 0.2s;
+}
+.jt-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
 
 /* BONUS END */
 .bend-ov{position:fixed;inset:0;background:#000000dd;z-index:250;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;}
@@ -287,42 +304,69 @@ canvas#wheelCanvas{border-radius:50%;border:3px solid var(--gold);box-shadow:0 0
 <body>
 <canvas id="stars"></canvas>
 
-<!-- ═══════════════ JACKPOT ═══════════════ -->
+<!-- ══════════════════════════════════════
+     JACKPOT OVERLAYS (Hidden by default)
+══════════════════════════════════════ -->
+
 <!-- BAT JACKPOT -->
-<div class="jackpot-ov" id="jackpotOv-bat" style="background:#000000ee;">
-  <div class="jt-text" style="background:linear-gradient(135deg,#9b00ff,#ffd700,#cc00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">🦇 JACKPOT! 🦇</div>
-  <div class="jt-sub">30 MIN VC WITH BABYYBAT</div>
-  <div class="jt-sub" id="jtAmt-bat" style="margin-top:4px;font-size:13px;"></div>
-  <div style="margin:18px 0 10px;font-size:10px;color:#ffffff77;letter-spacing:.15em;max-width:340px;line-height:1.8;">You won an exclusive 30-minute video call with BabyyBATxoxo! Fill out the form below to claim your prize.</div>
-  <iframe id="batJpForm" src="https://formspree.io/f/mgaejnze" style="width:100%;max-width:380px;height:340px;border:1px solid #9b00ff44;border-radius:12px;background:#0a000f;"></iframe>
-  <button class="jt-close" style="border-color:#9b00ff;color:#9b00ff;box-shadow:0 0 8px #9b00ff;" onclick="closeJackpot('bat')">CLOSE</button>
+<div class="jackpot-ov" id="jackpotOv-bat">
+  <div style="background:#0a000f; border:1px solid #9b00ff44; border-radius:16px; padding:24px; text-align:center; max-width:400px; width:90%;">
+    <div style="background:linear-gradient(135deg,#9b00ff,#ffd700,#cc00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; font-size:28px; font-weight:900; margin-bottom:8px;">🦇 JACKPOT! 🦇</div>
+    <div style="color:#fff; font-size:16px; font-weight:bold; margin-bottom:4px;">30 MIN VC WITH BABYYBAT</div>
+    <div id="jtAmt-bat" style="color:#ffd700; font-size:14px; margin-bottom:16px;"></div>
+    <p style="font-size:12px; color:#ffffff77; margin-bottom:16px; line-height:1.5;">Fill out the form below to claim your prize. We'll be in touch!</p>
+    
+    <form action="https://formspree.io/f/mgaejnze" method="POST" style="display:flex; flex-direction:column; gap:10px; text-align:left;">
+      <input type="text" name="discord_username" placeholder="Your Discord Username" required style="background:#000; border:1px solid #9b00ff; color:#fff; padding:10px; border-radius:6px; font-family:inherit;">
+      <textarea name="message" placeholder="How do we contact you?" rows="3" required style="background:#000; border:1px solid #9b00ff; color:#fff; padding:10px; border-radius:6px; font-family:inherit;"></textarea>
+      <button type="submit" style="background:#9b00ff; color:#fff; border:none; padding:12px; border-radius:6px; font-weight:900; cursor:pointer; font-family:'Orbitron',sans-serif;">CLAIM PRIZE</button>
+    </form>
+    
+    <button class="jt-close" style="color:#9b00ff; border-color:#9b00ff;" onclick="closeJackpot('bat')">CLOSE</button>
+  </div>
 </div>
 
 <!-- DRAGON JACKPOT -->
-<div class="jackpot-ov" id="jackpotOv-dragon" style="background:#000000ee;">
-  <div class="jt-text" style="background:linear-gradient(135deg,#ff2d78,#ffd700,#ff9900);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">🐉 JACKPOT! 🐉</div>
-  <div class="jt-sub">30 MIN VC WITH DRAG0N</div>
-  <div class="jt-sub" id="jtAmt-dragon" style="margin-top:4px;font-size:13px;"></div>
-  <div style="margin:18px 0 10px;font-size:10px;color:#ffffff77;letter-spacing:.15em;max-width:340px;line-height:1.8;">You won an exclusive 30-minute video call with Drag0n! Fill out the form below to claim your prize.</div>
-  <iframe id="dragJpForm" src="https://formspree.io/f/mvkojwqk" style="width:100%;max-width:380px;height:340px;border:1px solid #ff2d7844;border-radius:12px;background:#0a000f;"></iframe>
-  <button class="jt-close" style="border-color:#ff9900;color:#ff9900;box-shadow:0 0 8px #ff9900;" onclick="closeJackpot('dragon')">CLOSE</button>
+<div class="jackpot-ov" id="jackpotOv-dragon">
+  <div style="background:#0a000f; border:1px solid #ff2d7844; border-radius:16px; padding:24px; text-align:center; max-width:400px; width:90%;">
+    <div style="background:linear-gradient(135deg,#ff2d78,#ffd700,#ff9900);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; font-size:28px; font-weight:900; margin-bottom:8px;">🐉 JACKPOT! 🐉</div>
+    <div style="color:#fff; font-size:16px; font-weight:bold; margin-bottom:4px;">30 MIN VC WITH DRAG0N</div>
+    <div id="jtAmt-dragon" style="color:#ffd700; font-size:14px; margin-bottom:16px;"></div>
+    <p style="font-size:12px; color:#ffffff77; margin-bottom:16px; line-height:1.5;">Fill out the form below to claim your prize. We'll be in touch!</p>
+    
+    <form action="https://formspree.io/f/mvkojwqk" method="POST" style="display:flex; flex-direction:column; gap:10px; text-align:left;">
+      <input type="text" name="discord_username" placeholder="Your Discord Username" required style="background:#000; border:1px solid #ff2d78; color:#fff; padding:10px; border-radius:6px; font-family:inherit;">
+      <textarea name="message" placeholder="How do we contact you?" rows="3" required style="background:#000; border:1px solid #ff2d78; color:#fff; padding:10px; border-radius:6px; font-family:inherit;"></textarea>
+      <button type="submit" style="background:#ff2d78; color:#fff; border:none; padding:12px; border-radius:6px; font-weight:900; cursor:pointer; font-family:'Orbitron',sans-serif;">CLAIM PRIZE</button>
+    </form>
+    
+    <button class="jt-close" style="color:#ff9900; border-color:#ff9900;" onclick="closeJackpot('dragon')">CLOSE</button>
+  </div>
 </div>
 
 <!-- ICONIC JACKPOT -->
-<div class="jackpot-ov" id="jackpotOv-iconic" style="background:#000000ee;">
-  <div class="jt-text" style="background:linear-gradient(135deg,#00e5ff,#ffd700,#00e5ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">❤️‍🔥 JACKPOT! ❤️‍🔥</div>
-  <div class="jt-sub">15 MIN VC — YOU CHOOSE WHO!</div>
-  <div class="jt-sub" id="jtAmt-iconic" style="margin-top:4px;font-size:13px;"></div>
-  <div style="margin:18px 0 6px;font-size:10px;color:#ffffff77;letter-spacing:.15em;max-width:340px;line-height:1.8;">You won a 15-minute video call with BabyyBAT, Drag0n, or BOTH! Fill out the form below to claim.</div>
-  <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;justify-content:center;">
-    <div style="font-size:9px;border:1px solid #9b00ff66;border-radius:8px;padding:5px 12px;color:#9b00ff;letter-spacing:.1em;">🦇 BabyyBAT</div>
-    <div style="font-size:9px;border:1px solid #ff2d7866;border-radius:8px;padding:5px 12px;color:#ff2d78;letter-spacing:.1em;">🐉 Drag0n</div>
-    <div style="font-size:9px;border:1px solid #ffd70066;border-radius:8px;padding:5px 12px;color:#ffd700;letter-spacing:.1em;">✨ BOTH</div>
+<div class="jackpot-ov" id="jackpotOv-iconic">
+  <div style="background:#0a000f; border:1px solid #00e5ff44; border-radius:16px; padding:24px; text-align:center; max-width:400px; width:90%;">
+    <div style="background:linear-gradient(135deg,#00e5ff,#ffd700,#00e5ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; font-size:28px; font-weight:900; margin-bottom:8px;">❤️‍🔥 JACKPOT! ❤️‍🔥</div>
+    <div style="color:#fff; font-size:16px; font-weight:bold; margin-bottom:4px;">15 MIN VC — YOU CHOOSE WHO!</div>
+    <div id="jtAmt-iconic" style="color:#ffd700; font-size:14px; margin-bottom:16px;"></div>
+    <p style="font-size:12px; color:#ffffff77; margin-bottom:16px; line-height:1.5;">Fill out the form below to claim your prize. We'll be in touch!</p>
+    
+    <form action="https://formspree.io/f/mwlkdrqo" method="POST" style="display:flex; flex-direction:column; gap:10px; text-align:left;">
+      <input type="text" name="discord_username" placeholder="Your Discord Username" required style="background:#000; border:1px solid #00e5ff; color:#fff; padding:10px; border-radius:6px; font-family:inherit;">
+      <select name="vc_choice" required style="background:#000; border:1px solid #00e5ff; color:#fff; padding:10px; border-radius:6px; font-family:inherit;">
+        <option value="" disabled selected>Choose your VC host...</option>
+        <option value="BabyyBAT">🦇 BabyyBAT</option>
+        <option value="Drag0n">🐉 Drag0n</option>
+        <option value="BOTH">✨ BOTH ✨</option>
+      </select>
+      <textarea name="message" placeholder="Any extra details?" rows="2" style="background:#000; border:1px solid #00e5ff; color:#fff; padding:10px; border-radius:6px; font-family:inherit;"></textarea>
+      <button type="submit" style="background:#00e5ff; color:#000; border:none; padding:12px; border-radius:6px; font-weight:900; cursor:pointer; font-family:'Orbitron',sans-serif;">CLAIM PRIZE</button>
+    </form>
+    
+    <button class="jt-close" style="color:#00e5ff; border-color:#00e5ff;" onclick="closeJackpot('iconic')">CLOSE</button>
   </div>
-  <iframe id="iconJpForm" src="https://formspree.io/f/mwlkdrqo" style="width:100%;max-width:380px;height:340px;border:1px solid #00e5ff44;border-radius:12px;background:#0a000f;"></iframe>
-  <button class="jt-close" style="border-color:#00e5ff;color:#00e5ff;box-shadow:0 0 8px #00e5ff;" onclick="closeJackpot('iconic')">CLOSE</button>
 </div>
-
 <!-- ═══════════════ BONUS ENTRY ═══════════════ -->
 <div class="overlay" id="bonusEntryOv">
   <div class="ov-title" id="beTitle">FREE SPINS!</div>
@@ -733,7 +777,12 @@ function showJackpot(prize, game){
   resetJpMeter(g);
   spawnParticles(60,true);
 }
-function closeJackpot(game){ document.getElementById(`jackpotOv-${game}`).classList.remove('show'); }
+function closeJackpot(game) { 
+  const el = document.getElementById(`jackpotOv-${game}`);
+  if (el) {
+    el.classList.remove('show');
+  }
+}
 
 // ══════════════════════════════════════════════════
 //  WIN MSG
@@ -1437,7 +1486,7 @@ function evalIcon(){
 
   // 1. TRUE JACKPOT: Must be 💲 💲 💲 across all 3 center reels
   if (centerLine[0] === '💲' && centerLine[1] === '💲' && centerLine[2] === '💲') {
-    const jpPrize = bet * 500; 
+    const jpPrize = bet * 500000; 
     coins += jpPrize;
     updateIconUI();
     showJackpot(jpPrize, 'iconic'); // This triggers your Formspree popup
@@ -1447,7 +1496,7 @@ function evalIcon(){
 
   // 2. GUARANTEED JACKPOT: If the meter hits 100%, force the win
   if (window.forceIconicJackpot) {
-    const jpPrize = bet * 500;
+    const jpPrize = bet * 500000;
     coins += jpPrize;
     updateIconUI();
     showJackpot(jpPrize, 'iconic');

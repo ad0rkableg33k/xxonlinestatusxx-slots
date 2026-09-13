@@ -1479,24 +1479,23 @@ function iconSpin(){
   });
 }
 
-function evalIcon(){
+function evalIcon() {
   const bet = BET_STEPS[iconBetIdx];
-  // Center row = row index 1 of each reel
   const centerLine = [iconGrid[0][1], iconGrid[1][1], iconGrid[2][1]];
 
   // 1. TRUE JACKPOT: Must be 💲 💲 💲 across all 3 center reels
   if (centerLine[0] === '💲' && centerLine[1] === '💲' && centerLine[2] === '💲') {
-    const jpPrize = bet * 500000; 
+    const jpPrize = bet * 500;
     coins += jpPrize;
     updateIconUI();
-    showJackpot(jpPrize, 'iconic'); // This triggers your Formspree popup
+    showJackpot(jpPrize, 'iconic');
     resetJpMeter('iconic');
-    return; // Stop evaluating, they won the jackpot
+    return; // Stop here, they won the jackpot
   }
 
   // 2. GUARANTEED JACKPOT: If the meter hits 100%, force the win
   if (window.forceIconicJackpot) {
-    const jpPrize = bet * 500000;
+    const jpPrize = bet * 500;
     coins += jpPrize;
     updateIconUI();
     showJackpot(jpPrize, 'iconic');
@@ -1505,70 +1504,78 @@ function evalIcon(){
     return;
   }
 
-  // check for BAR (bonus) on center line
+  // Check for BAR (bonus) on center line
   const hasBar = centerLine.includes(ICON_BAR);
-
-  // Replace wilds
   const effective = centerLine.map(s => s === ICON_WILD ? 'WILD' : s);
 
-  // Find base symbol
   let base = null;
-  for(let s of centerLine){ if(s !== ICON_WILD && s !== ICON_BAR){ base = s; break; } }
+  for (let s of centerLine) {
+    if (s !== ICON_WILD && s !== ICON_BAR) { base = s; break; }
+  }
 
-  let prize = 0, winKey = '', winMsg = '';
+  let prize = 0, winKey = '';
 
-  if(!hasBar){
-    // Check 3 of a kind (with wild substitution)
+  if (!hasBar) {
     const allMatch = centerLine.every(s => s === centerLine.find(x => x !== ICON_WILD && x !== ICON_BAR) || s === ICON_WILD);
     const effLine = centerLine.map(s => s === ICON_WILD ? (base || ICON_WILD) : s);
     const k3 = effLine.join('');
-    if(ICON_PAY_CENTER[k3]){ prize = bet * ICON_PAY_CENTER[k3]; winKey = k3; }
-    // 2 cherries
-    else if(!winKey){ 
-      const cherries = centerLine.filter(s => s === '🍒' || s === ICON_WILD).length; 
-      if(cherries >= 2 && centerLine[0] === '🍒'){ prize = bet * ICON_PAY_CENTER['🍒🍒']; winKey = '🍒🍒'; } 
+    
+    if (ICON_PAY_CENTER[k3]) { prize = bet * ICON_PAY_CENTER[k3]; winKey = k3; }
+    else {
+      const cherries = centerLine.filter(s => s === '🍒' || s === ICON_WILD).length;
+      if (cherries >= 2 && centerLine[0] === '🍒') { prize = bet * ICON_PAY_CENTER['🍒🍒']; winKey = '🍒🍒'; }
+      else if (!winKey && centerLine[0] === '🍒') { prize = bet * ICON_PAY_CENTER['🍒']; winKey = '🍒'; }
     }
-    // 1 cherry
-    if(!winKey && centerLine[0] === '🍒'){ prize = bet * ICON_PAY_CENTER['🍒']; winKey = '🍒'; }
   }
 
-  // highlight center cells
-  if(winKey || hasBar){
-    for(let r = 0; r < 3; r++){
+  // Highlight center cells if win or bar
+  if (winKey || hasBar) {
+    for (let r = 0; r < 3; r++) {
       const strip = document.getElementById(`icon_strip${r}`);
-      const cells = strip.querySelectorAll('.iconic-cell');
-      cells[2].classList.add('win-hl'); // center row = cell index 2
+      if (strip) {
+        const cells = strip.querySelectorAll('.iconic-cell');
+        if (cells[2]) cells[2].classList.add('win-hl');
+      }
     }
   }
 
-  if(prize > 0){
-    coins += prize; updateIconUI();
+  // Normal win payout
+  if (prize > 0) {
+    coins += prize;
+    updateIconUI();
     document.getElementById('iconLW').textContent = prize.toLocaleString();
     document.getElementById('iconLastWin').textContent = prize.toLocaleString();
+    
     const tier = prize >= bet * 50 ? 'big' : prize >= bet * 10 ? 'med' : 'small';
-    const msgs = { big: ['JACKPOT!!','TRIPLE 7s!! 🎰'], med: ['BIG WIN!','Lucky! ⭐'], small: ['Win!','Cha-ching~'] };
-    const m = msgs[tier]; 
+    const msgs = { big: ['JACKPOT!!', 'TRIPLE 7s!! 🎰'], med: ['BIG WIN!', 'Lucky! ⭐'], small: ['Win!', 'Cha-ching~'] };
+    const m = msgs[tier];
     showWinMsg('iconWinMsg', 'iconWinSub', m[Math.floor(Math.random() * m.length)], `+${prize.toLocaleString()} coins`);
-    document.getElementById('iconMachine').classList.add('winning'); 
-    setTimeout(() => document.getElementById('iconMachine').classList.remove('winning'), 1200);
+    
+    const machine = document.getElementById('iconMachine');
+    if (machine) {
+      machine.classList.add('winning');
+      setTimeout(() => machine.classList.remove('winning'), 1200);
+    }
     spawnParticles(tier === 'big' ? 24 : 8);
   }
 
-  if(hasBar){
+  // Trigger Bonus if BAR is present
+  if (hasBar) {
     setTimeout(() => {
       boxPicked = false; cardPicked = false; mineWon = 0; minePicked = false; wheelSpinning = false;
       openMiniGame(BET_STEPS[iconBetIdx], (bonusPrize) => {
-        if(bonusPrize > 0){
-          coins += bonusPrize; updateIconUI();
+        if (bonusPrize > 0) {
+          coins += bonusPrize;
+          updateIconUI();
           showWinMsg('iconWinMsg', 'iconWinSub', 'BONUS WIN!', `+${bonusPrize.toLocaleString()} coins`);
           spawnParticles(20, true);
         }
       });
     }, prize > 0 ? 1400 : 400);
-  } else if(prize === 0){
-    // near miss
+  } else if (prize === 0) {
+    // Near miss logic
     const matching = centerLine.filter((s, i, a) => s === a[0] || s === ICON_WILD).length;
-    if(matching >= 2) setTimeout(() => showWinMsg('iconWinMsg', 'iconWinSub', 'So close!', ''), 200);
+    if (matching >= 2) setTimeout(() => showWinMsg('iconWinMsg', 'iconWinSub', 'So close!', ''), 200);
   }
 }
   // highlight center cells

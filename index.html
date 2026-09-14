@@ -1579,50 +1579,6 @@ function evalIcon() {
   }
 }
 
-  // highlight center cells
-  if(winKey||hasBar){
-    for(let r=0;r<3;r++){
-      const strip=document.getElementById(`icon_strip${r}`);
-      const cells=strip.querySelectorAll('.iconic-cell');
-      cells[2].classList.add('win-hl'); // center row = cell index 2 (offset 1)
-    }
-  }
-
-  // Independent jackpot roll (medium chance)
-  if(!hasBar && rollJackpot('iconic')){
-    const jpPrize=bet*200;coins+=jpPrize;updateIconUI();
-    showJackpot(jpPrize,'iconic');return;
-  }
-}
-  if(prize>0){
-    coins+=prize;updateIconUI();
-    document.getElementById('iconLW').textContent=prize.toLocaleString();
-    document.getElementById('iconLastWin').textContent=prize.toLocaleString();
-    const tier=prize>=bet*50?'big':prize>=bet*10?'med':'small';
-    const msgs={big:['JACKPOT!!','TRIPLE 7s!! 🎰'],med:['BIG WIN!','Lucky! ⭐'],small:['Win!','Cha-ching~']};
-    const m=msgs[tier];showWinMsg('iconWinMsg','iconWinSub',m[Math.floor(Math.random()*m.length)],`+${prize.toLocaleString()} coins`);
-    document.getElementById('iconMachine').classList.add('winning');setTimeout(()=>document.getElementById('iconMachine').classList.remove('winning'),1200);
-    spawnParticles(tier==='big'?24:8);
-  }
-
-  if(hasBar){
-    setTimeout(()=>{
-      boxPicked=false;cardPicked=false;mineWon=0;minePicked=false;wheelSpinning=false;
-      openMiniGame(BET_STEPS[iconBetIdx],(bonusPrize)=>{
-        if(bonusPrize>0){
-          coins+=bonusPrize;updateIconUI();
-          showWinMsg('iconWinMsg','iconWinSub','BONUS WIN!',`+${bonusPrize.toLocaleString()} coins`);
-          spawnParticles(20,true);
-        }
-      });
-    },prize>0?1400:400);
-  } else if(prize===0){
-    // near miss
-    const matching=centerLine.filter((s,i,a)=>s===a[0]||s===ICON_WILD).length;
-    if(matching>=2)setTimeout(()=>showWinMsg('iconWinMsg','iconWinSub','So close!',''),200);
-  }
-}
-
 function iconChangeBet(d){if(iconSpinning)return;iconBetIdx=Math.max(0,Math.min(BET_STEPS.length-1,iconBetIdx+d));updateIconUI();}
 function iconSetBet(v){if(iconSpinning)return;const i=BET_STEPS.indexOf(v);if(i>-1){iconBetIdx=i;updateIconUI();}}
 function iconMaxBet(){if(iconSpinning)return;iconBetIdx=BET_STEPS.length-1;updateIconUI();}
